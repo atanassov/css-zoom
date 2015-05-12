@@ -1,0 +1,95 @@
+<h1>CSS Zoom Module Level 1</h1>
+
+<pre class='metadata'>
+Status: UD
+Shortname: css-zoom
+Level: 1
+Group: csswg
+ED: None
+Editor: Rossen Atanassov, Microsoft, ratan@microsoft.com
+!Issues list: <a href="https://www.w3.org/Bugs/Public/buglist.cgi?query_format=advanced&amp;product=CSS&amp;component=Zoom&amp;resolution=---&amp;cmdtype=doit">in Bugzilla</a>
+Abstract: CSS Zoom defines a behavior for controling the layout size of an element's box. CSS Zoom can be defined on any CSS block-level element.
+Ignored Terms: div, dl, dfn
+</pre>
+
+<h2 id="intro">
+Introduction</h2>
+
+  <em>This section is not normative.</em>
+
+  This specification defines features that allows zooming of elements and their
+  content. Through 'zoom' authors can magnify or reduce the size of rendered
+  elements. Unlike the 'transform' property, 'zoom' does have an effect over the
+  layout inside and around the element's box.
+
+<h2 id="controling zoom">
+Controling Zoom</h2>
+
+  An element becomes zoomed when the 'zoom' property has a positive computed value.
+
+<h3 id="zoom-property">
+The 'zoom' property</h3>
+
+  <pre class="propdef">
+  Name: zoom
+  Value: &lt;number&gt;
+  Initial: 0
+  Applies to: all &lt;length&gt; property values of block-level elements
+  Inherited: no
+  Percentages: Refer to all &lt;length&gt; property values
+  Media: visual
+  Computed value: as specified except for element's whose 'float' computed value is not ''none'', in which case the computed value is ''auto''.
+  </pre>
+
+  The values of this property have the following meanings:
+
+  <dl dfn-for="wrap-flow" dfn-type=value>
+    <dt><dfn title="'zoom'!!'number'">number</dfn>
+    <dd>
+      Positive floating point number indicating a zoom factor. Numbers smaller
+      than 1.0 indicate a "zoom out" or size reduction effect, while numbers
+      greater than 1.0 indicate a magnifying effect.
+
+    <dt><dfn title="'zoom'!!'percent'">percent</dfn>
+    <dd>
+        Positive floating point number, followed by a percentage character ("%")
+        which indicates a zoom factor. Percentages smaller than 100% indicate a
+        "zoom out" or size reduction effect, while numbers greater than 100%
+        indicate a magnifying effect.
+  </dl>
+
+  Negative values for 'zoom' are illegal.
+
+<div class="example">
+  Example of 'zoom' property applied during hover for magnification effect.
+
+<pre>
+&lt;div class="messageBox"&gt;
+    &lt;div class="label"&gt;Text of the label&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;style type="text/css"&gt;
+.messageBox {
+    width: 10em;
+    padding: 2em;
+    border: medium solid lightblue;
+}
+
+.messageBox:hover {
+    zoom: 150%;
+}
+
+.label {
+    background: lightgrey;
+    padding: 1em;
+    text-align: center;
+}
+&lt;/style&gt;
+</pre>
+
+  Illustration of the before and after hover state of the message box element.
+  <img src="css_zoom_hover_example.png" />
+
+<h2 id='om-interactions'>
+  OM Interactions</h2>
+
