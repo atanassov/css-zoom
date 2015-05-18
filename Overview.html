@@ -33,7 +33,7 @@
    <h1 class="p-name no-ref" id="title">CSS Zoom Module Level 1</h1>
   
    <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Unofficial Proposal Draft,
-    <time class="dt-updated" datetime="2015-05-11">11 May 2015</time></span></h2>
+    <time class="dt-updated" datetime="2015-05-17">17 May 2015</time></span></h2>
   
    <div data-fill-with="spec-metadata">
     <dl>
@@ -41,6 +41,8 @@
      <dd><a class="u-url" href="None">None</a>
      <dt>Feedback:
      <dd><span><a href="mailto:www-style@w3.org?subject=%5Bcss-zoom%5D%20feedback">www-style@w3.org</a> with subject line “<kbd>[css-zoom] <var>… message topic …</var></kbd>” (<a href="http://lists.w3.org/Archives/Public/www-style/" rel="discussion">archives</a>)</span>
+     <dt>Issue Tracking:
+     <dd><a href="#issues-index">Inline In Spec</a>
      <dt class="editor">Editor:
      <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:ratan@microsoft.com">Rossen Atanassov</a> (<span class="p-org org">Microsoft</span>)
      <dt>Issues list:
@@ -86,8 +88,14 @@ Controling Zoom</span></a>
       <li><a href="#zoom-property"><span class="secno">2.1</span> <span class="content">
 The <span class="property">zoom</span> property</span></a>
      </ul>
-    <li><a href="#om-interactions"><span class="secno">3</span> <span class="content">
-  OM Interactions</span></a>
+    <li><a href="#dom--cssom-interactions"><span class="secno">3</span> <span class="content">
+  DOM and CSSOM interaction</span></a>
+     <ul class="toc">
+      <li><a href="#scaled-om-serialization"><span class="secno">3.1</span> <span class="content">
+  Scaled interface serialization</span></a>
+      <li><a href="#unscaled-om-serialization"><span class="secno">3.2</span> <span class="content">
+  Unscaled interface serialization</span></a>
+     </ul>
     <li><a href="#conformance"><span class="secno"></span> <span class="content">
 Conformance</span></a>
      <ul class="toc">
@@ -112,6 +120,7 @@ Non-experimental implementations</span></a>
       <li><a href="#normative"><span class="secno"></span> <span class="content">Normative References</span></a>
      </ul>
     <li><a href="#property-index"><span class="secno"></span> <span class="content">Property Index</span></a>
+    <li><a href="#issues-index"><span class="secno"></span> <span class="content">Issues Index</span></a>
    </ul></div>
 
   <main>
@@ -129,7 +138,7 @@ Introduction</span><a class="self-link" href="#intro"></a></h2>
 
    <p>This specification defines features that allows zooming of elements and their
   content. Through <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> authors can magnify or reduce the size of rendered
-  elements. Unlike the <a class="property" data-link-type="propdesc" href="http://www.w3.org/TR/css3-2d-transforms/#propdef-transform">transform</a> property, <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> does have an effect over the
+  elements. Unlike the <a class="property" data-link-type="propdesc" href="http://dev.w3.org/csswg/css-transforms-1/#propdef-transform">transform</a> property, <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> does have an effect over the
   layout inside and around the element’s box.</p>
 
 
@@ -137,9 +146,35 @@ Introduction</span><a class="self-link" href="#intro"></a></h2>
 Controling Zoom</span><a class="self-link" href="#controling%20zoom"></a></h2>
 
 
-   <p>An element becomes zoomed when the <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> property has a positive computed value.</p>
+   <p>An element becomes zoomed when the <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> property has a positive computed value
+  different than 1. <a class="property" data-link-type="propdesc" href="#propdef-zoom">Zoom</a> affects computed property values. The computed value of
+  <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> is applied as a scalar to all &lt;length> property values resulting
+  in a magnification or minificaiton effect. Unlike <a class="property" data-link-type="propdesc" href="http://dev.w3.org/csswg/css-transforms-1/#propdef-transform">transform</a> scaling the
+  <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> property affects layout.</p>
 
 
+   <p>Nested values of <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> accumulate resulting in additinal scaling of &lt;length> values.</p>
+
+
+   <p>The <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> property has no effect to &lt;length> property values with computed
+  value is <a class="css" data-link-type="maybe" href="http://dev.w3.org/csswg/css-align-3/#valdef-justify-content-auto">auto</a> or &lt;percent>.</p>
+
+  
+   <p class="note" role="note">
+    The computed value of <a class="property" data-link-type="propdesc" href="http://dev.w3.org/csswg/css-fonts-3/#propdef-font-size">font-size</a> is never &lt;percent> thus <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> always applies.
+
+  </p>
+   <p class="note" role="note">
+    <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> does not affect or prevent <a class="property" data-link-type="propdesc" href="http://dev.w3.org/csswg/css-transforms-1/#propdef-transform">transform</a> scaling.
+
+  </p>
+   <p class="issue" id="issue-7a9732ca"><a class="self-link" href="#issue-7a9732ca"></a>
+  There is no real reason why &lt;percent> values shouldn’t be affected by <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a>, however
+  this is dictated by current interop behavior. To achieve this the <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> should
+  &lt;percent> values should be scaled only by the <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> value specified on the the
+  element itself and not the accumulated value.
+
+</p>
    <h3 class="heading settled" data-level="2.1" id="zoom-property"><span class="secno">2.1. </span><span class="content">
 The <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> property</span><a class="self-link" href="#zoom-property"></a></h3>
 
@@ -169,7 +204,7 @@ The <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> 
       <td>visual
      <tr>
       <th>Computed value:
-      <td>as specified except for element’s whose <a class="property" data-link-type="propdesc" href="http://dev.w3.org/csswg/css2/visuren.html#propdef-float">float</a> computed value is not <a class="css" data-link-type="maybe" href="http://dev.w3.org/csswg/css-animations-1/#valdef-animation-name-none">none</a>, in which case the computed value is <a class="css" data-link-type="maybe" href="http://dev.w3.org/csswg/css-device-adapt-1/#valdef-zoom-auto">auto</a>.
+      <td>as specified except for element’s whose <a class="property" data-link-type="propdesc" href="http://dev.w3.org/csswg/css2/visuren.html#propdef-float">float</a> computed value is not <a class="css" data-link-type="maybe" href="http://dev.w3.org/csswg/css-animations-1/#valdef-animation-name-none">none</a>, in which case the computed value is <span class="css">'auto</span>'.
      <tr>
       <th>Animatable:
       <td>no</table>
@@ -180,21 +215,21 @@ The <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> 
   
    <dl>
     
-    <dt><dfn class="css" data-dfn-for="wrap-flow" data-dfn-type="value" data-export="" id="valdef-wrap-flow-number" title="'zoom'!!'number'">number<a class="self-link" href="#valdef-wrap-flow-number"></a></dfn>
+    <dt><dfn class="css" data-dfn-for="wrap-flow" data-dfn-type="value" data-export="" data-lt="'zoom'!!'number'" id="valdef-wrap-flow-zoomnumber">number<a class="self-link" href="#valdef-wrap-flow-zoomnumber"></a></dfn>
     
     <dd>
       Positive floating point number indicating a zoom factor. Numbers smaller
-      than 1.0 indicate a "zoom out" or size reduction effect, while numbers
-      greater than 1.0 indicate a magnifying effect.
+      than 1.0 indicate a "zoom out" or minification effect, while numbers
+      greater than 1.0 indicate a "zoom in" or magnification effect.
 
     
-    <dt><dfn class="css" data-dfn-for="wrap-flow" data-dfn-type="value" data-export="" id="valdef-wrap-flow-percent" title="'zoom'!!'percent'">percent<a class="self-link" href="#valdef-wrap-flow-percent"></a></dfn>
+    <dt><dfn class="css" data-dfn-for="wrap-flow" data-dfn-type="value" data-export="" data-lt="'zoom'!!<percent>" id="valdef-wrap-flow-zoompercent">percent<a class="self-link" href="#valdef-wrap-flow-zoompercent"></a></dfn>
     
     <dd>
-        Positive floating point number, followed by a percentage character ("%")
-        which indicates a zoom factor. Percentages smaller than 100% indicate a
-        "zoom out" or size reduction effect, while numbers greater than 100%
-        indicate a magnifying effect.
+      Positive floating point number, followed by a percentage character ("%")
+      which indicates a zoom factor. Percent values smaller than 100% indicate a
+      "zoom out" or minification effect, while numbers greater than 100%
+      indicate a "zoom in" or magnification effect.
   
    </dl>
 
@@ -202,7 +237,7 @@ The <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> 
    <p>Negative values for <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> are illegal.</p>
 
 
-   <div class="example" id="example-34ddfd29"><a class="self-link" href="#example-34ddfd29"></a>
+   <div class="example" id="example-f9dcf129"><a class="self-link" href="#example-f9dcf129"></a>
   Example of <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> property applied during hover for magnification effect.
 
 
@@ -234,10 +269,68 @@ The <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> 
   <img src="css_zoom_hover_example.png"></p>
 
 
-    <h2 class="heading settled" data-level="3" id="om-interactions"><span class="secno">3. </span><span class="content">
-  OM Interactions</span><a class="self-link" href="#om-interactions"></a></h2>
+    <h2 class="heading settled" data-level="3" id="dom--cssom-interactions"><span class="secno">3. </span><span class="content">
+  DOM and CSSOM interaction</span><a class="self-link" href="#dom--cssom-interactions"></a></h2>
 
 
+    <p>The current interoperable behavior of <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> affects DOM and CSSOM interface serialization in two ways; removing or preserving the scaling of the accumulated <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> value.</p>
+
+
+    <h3 class="heading settled" data-level="3.1" id="scaled-om-serialization"><span class="secno">3.1. </span><span class="content">
+  Scaled interface serialization</span><a class="self-link" href="#scaled-om-serialization"></a></h3>
+
+
+    <p>The following API preseve the accumulated scaling effect of <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a>
+  resulting in serialization of values that are the result of layout.</p>
+
+  
+    <ul>
+    
+     <li>offsetTop
+    
+     <li>offsetLeft
+    
+     <li>clientRects
+    
+     <li>scrollTop
+    
+     <li>scrollLeft
+    
+     <li>boundingClientRect
+  
+    </ul>
+
+
+    <h3 class="heading settled" data-level="3.2" id="unscaled-om-serialization"><span class="secno">3.2. </span><span class="content">
+  Unscaled interface serialization</span><a class="self-link" href="#unscaled-om-serialization"></a></h3>
+
+
+    <p>The unscaled serialization is performed by applying the inverse accumulated
+  <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> value to the following OM API. The results of such of serialization
+  are values approximating the computed values if <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> didn’t apply at all.</p>
+
+  
+    <ul>
+    
+     <li>All used values from getComputedStyle properties
+    
+     <li>offsetHeight
+    
+     <li>offsetWidth
+    
+     <li>scrollHeight
+    
+     <li>scrollWidth
+    
+     <li>clientHeight
+    
+     <li>clientWidth
+    
+     <li>scrollTop
+    
+     <li>scrollLeft
+  
+    </ul>
 </div></main>
 
   <h2 class="no-ref no-num heading settled" id="conformance"><span class="content">
@@ -407,23 +500,27 @@ Non-experimental implementations</span><a class="self-link" href="#testing"></a>
   <h2 class="no-num heading settled" id="index"><span class="content">Index</span><a class="self-link" href="#index"></a></h2>
   <h3 class="no-num heading settled" id="index-defined-here"><span class="content">Terms defined by this specification</span><a class="self-link" href="#index-defined-here"></a></h3>
   <ul class="indexlist">
-   <li>number, <a href="#valdef-wrap-flow-number">2.1</a>
-   <li>percent, <a href="#valdef-wrap-flow-percent">2.1</a>
    <li>zoom, <a href="#propdef-zoom">2.1</a>
+   <li>'zoom'!!'number', <a href="#valdef-wrap-flow-zoomnumber">2.1</a>
+   <li>'zoom'!!&lt;percent>, <a href="#valdef-wrap-flow-zoompercent">2.1</a>
   </ul>
   <h3 class="no-num heading settled" id="index-defined-elsewhere"><span class="content">Terms defined by reference</span><a class="self-link" href="#index-defined-elsewhere"></a></h3>
   <ul class="indexlist">
-   <li><a data-link-type="biblio" href="#biblio-css-2d-transforms-1">[css-2d-transforms-1]</a> defines the following terms:
+   <li><a data-link-type="biblio" href="#biblio-css-align-3">[css-align-3]</a> defines the following terms:
     <ul>
-     <li><a href="http://www.w3.org/TR/css3-2d-transforms/#propdef-transform">transform</a>
+     <li><a href="http://dev.w3.org/csswg/css-align-3/#valdef-justify-content-auto">auto</a>
     </ul>
    <li><a data-link-type="biblio" href="#biblio-css-animations-1">[css-animations-1]</a> defines the following terms:
     <ul>
      <li><a href="http://dev.w3.org/csswg/css-animations-1/#valdef-animation-name-none">none</a>
     </ul>
-   <li><a data-link-type="biblio" href="#biblio-css-device-adapt-1">[css-device-adapt-1]</a> defines the following terms:
+   <li><a data-link-type="biblio" href="#biblio-css-fonts-3">[css-fonts-3]</a> defines the following terms:
     <ul>
-     <li><a href="http://dev.w3.org/csswg/css-device-adapt-1/#valdef-zoom-auto">auto</a>
+     <li><a href="http://dev.w3.org/csswg/css-fonts-3/#propdef-font-size">font-size</a>
+    </ul>
+   <li><a data-link-type="biblio" href="#biblio-css-transforms-1">[css-transforms-1]</a> defines the following terms:
+    <ul>
+     <li><a href="http://dev.w3.org/csswg/css-transforms-1/#propdef-transform">transform</a>
     </ul>
    <li><a data-link-type="biblio" href="#biblio-css21">[CSS21]</a> defines the following terms:
     <ul>
@@ -435,12 +532,14 @@ Non-experimental implementations</span><a class="self-link" href="#testing"></a>
   <dl>
    <dt id="biblio-css21"><a class="self-link" href="#biblio-css21"></a>[CSS21]
    <dd>Bert Bos; et al. <a href="http://www.w3.org/TR/CSS2">Cascading Style Sheets Level 2 Revision 1 (CSS 2.1) Specification</a>. 7 June 2011. REC. URL: <a href="http://www.w3.org/TR/CSS2">http://www.w3.org/TR/CSS2</a>
-   <dt id="biblio-css-2d-transforms-1"><a class="self-link" href="#biblio-css-2d-transforms-1"></a>[CSS-2D-TRANSFORMS-1]
-   <dd>CSS 2D Transforms Module Level 1 URL: <a href="http://www.w3.org/TR/css3-2d-transforms/">http://www.w3.org/TR/css3-2d-transforms/</a>
+   <dt id="biblio-css-align-3"><a class="self-link" href="#biblio-css-align-3"></a>[CSS-ALIGN-3]
+   <dd>Elika Etemad; Tab Atkins Jr.. <a href="http://www.w3.org/TR/css-align-3/">CSS Box Alignment Module Level 3</a>. 18 December 2014. WD. URL: <a href="http://www.w3.org/TR/css-align-3/">http://www.w3.org/TR/css-align-3/</a>
    <dt id="biblio-css-animations-1"><a class="self-link" href="#biblio-css-animations-1"></a>[CSS-ANIMATIONS-1]
    <dd>CSS Animations Module Level 1 URL: <a href="http://www.w3.org/TR/css3-animations/">http://www.w3.org/TR/css3-animations/</a>
-   <dt id="biblio-css-device-adapt-1"><a class="self-link" href="#biblio-css-device-adapt-1"></a>[CSS-DEVICE-ADAPT-1]
-   <dd>CSS Device Adaptation Level 1 URL: <a href="http://www.w3.org/TR/css-device-adapt/">http://www.w3.org/TR/css-device-adapt/</a>
+   <dt id="biblio-css-fonts-3"><a class="self-link" href="#biblio-css-fonts-3"></a>[CSS-FONTS-3]
+   <dd>John Daggett. <a href="http://www.w3.org/TR/css-fonts-3/">CSS Fonts Module Level 3</a>. 3 October 2013. CR. URL: <a href="http://www.w3.org/TR/css-fonts-3/">http://www.w3.org/TR/css-fonts-3/</a>
+   <dt id="biblio-css-transforms-1"><a class="self-link" href="#biblio-css-transforms-1"></a>[CSS-TRANSFORMS-1]
+   <dd>Simon Fraser; et al. <a href="http://www.w3.org/TR/css-transforms-1/">CSS Transforms Module Level 1</a>. 26 November 2013. WD. URL: <a href="http://www.w3.org/TR/css-transforms-1/">http://www.w3.org/TR/css-transforms-1/</a>
    <dt id="biblio-rfc2119"><a class="self-link" href="#biblio-rfc2119"></a>[RFC2119]
    <dd>S. Bradner. <a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>. March 1997. Best Current Practice. URL: <a href="https://tools.ietf.org/html/rfc2119">https://tools.ietf.org/html/rfc2119</a>
   </dl>
@@ -467,6 +566,16 @@ Non-experimental implementations</span><a class="self-link" href="#testing"></a>
      <td>Refer to all &lt;length> property values
      <td>visual
      <td>no
-     <td>as specified except for element’s whose float computed value is not none, in which case the computed value is auto.
-  </table></body>
+     <td>as specified except for element’s whose float computed value is not none, in which case the computed value is 'auto'.
+  </table>
+  <h2 class="no-num heading settled" id="issues-index"><span class="content">Issues Index</span><a class="self-link" href="#issues-index"></a></h2>
+  <div style="counter-reset:issue">
+   <div class="issue">
+  There is no real reason why &lt;percent> values shouldn’t be affected by <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a>, however
+  this is dictated by current interop behavior. To achieve this the <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> should
+  &lt;percent> values should be scaled only by the <a class="property" data-link-type="propdesc" href="#propdef-zoom">zoom</a> value specified on the the
+  element itself and not the accumulated value.
+
+<a href="#issue-7a9732ca"> ↵ </a></div>
+  </div></body>
 </html>
